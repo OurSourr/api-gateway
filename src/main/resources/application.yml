@@ -1,0 +1,38 @@
+server:
+  port: 8080 # El Gateway escucha en el puerto 8080
+
+spring:
+  application:
+    name: ms-apigateway
+  cloud:
+    gateway:
+      routes:
+        #  Ruta pública para login y registro (Sin filtro)
+        - id: ms-autenticacion
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/auth/**
+
+        # Ruta protegida para Catálogo (Aplica JwtAuthenticationFilter)
+        - id: ms-catalogo
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/productos/**
+  #        filters:
+   #         - JwtAuthenticationFilter
+
+        # ruta protegida para Pedidos (Aplica JwtAuthenticationFilter)
+        - id: ms-pedidos
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/carrito/**, /api/v1/checkout/**
+ #         filters:
+#- JwtAuthenticationFilter
+
+        # Ruta protegida para Recetas (Aplica JwtAuthenticationFilter)
+        - id: ms-recetas
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/v1/recetas/**
+          filters:
+            - JwtAuthenticationFilter
